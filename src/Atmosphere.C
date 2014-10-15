@@ -8,8 +8,8 @@
   Atmosphere(RANDOM *random, float dt, float tau, int n) - constructor
 
   RANDOM *random - random number generator
-  float dt - time resolution of the simulated atmosphere, in seconds.
-  float tau - atmospheric coherence time, in seconds
+  float dt - time resolution of the simulated atmosphere, in ms
+  float tau - atmospheric coherence time, in ms
   int n - number of time points. Time in the model will then run from 
      0 to dt*(n-1)
 
@@ -43,26 +43,52 @@ Atmosphere::Atmosphere(RANDOM *random, double dt, double tau, int nn){
   // Multiply the Fourier transform by the square root of the
   // Kolmogorov power spectrum. The Kolmogorov power spectrum is
   // f^{-4/3}
-  double a=1.0; // Amplitude factor of the power spectrum
   double p=4./3.; // Index of the root power spectrum
-  double f1=1/dt/(double)/n; // Frequency resolution
+  double f1=1/dt/(double)n; // Frequency resolution
+  double f,tmp;
 
   d[0]=0; // Zero frequency special case set to zero
-  for(int i=2;i<n/2;i++){
-    f=ffac*i;
-    tmp=a*pow(f,p);
-    d[2*i]*=tmp;
-    d[2*i+1]*=tmp;
+  for(int i=1;i<n/2;i++){
+    f=f1*i;
+    tmp=pow(f,p);
+    d[2*i]/=tmp;
+    d[2*i+1]/=tmp;
   }
-  d[1]*=a*pow(f1*n/2,p); // Max frequency, n/2 special case
+  d[1]/=pow(f1*n/2,p); // Max frequency, n/2 special case
 
   // Reverse Fourier transform d
   drealft(d-1,n,-1);
 
+  // The following is amplitude calibration
+
   // Multiply d by reverse FFT normalization factor as described in
-  // Numerical Recipes
+  // Numerical Recipes (multiply by 2/n)
   for(int i=0;i<n;i++)
     d[i]*=2.0/(double)n;
+
+  // Experimentatlly I found that the structure function scales as
+  // dt, so if I divide the time-series by sqrt(dt) then dt
+  // should be removed as a factor in the amplitude. 
+  //tmp=pow(dt,4./3.);
+  for(int i=0;i<n;i++)
+    d[i]/=sqrt(dt);
+
+  // Dividing by this factor will make the structure function equal to
+  // (1/4*pi)^2 at a time delay of 1. 1/(4*pi) is 0.5/(2*pi), where
+  // 0.5 is 0.5 microns is a factor which converts from delay in
+  // microns to phase. This corresponds to making the phase structure
+  // function equal to 1 radian^2 at at a delay of 1, when the delay
+  // is in microns. This factor is experimentally determined.
+  for(int i=0;i<n;i++)
+    d[i]/=165.861;
+
+  // Finally we must scale by a factor which creates a 1 radian^2
+  // phase structure function at a coherence time tau. The structure
+  // function scales as tau^(5/3), so we divide by the square root of
+  // that, so divide by by tau^(5/6).
+  tmp=pow(tau,5./6.);
+  for(int i=0;i<n;i++)
+    d[i]/=tmp;
 }
 
 
@@ -94,7 +120,7 @@ double Atmosphere::get(double t){
   int isign - the direction of the Fourier transform. 1 for forward
   transformation, -1 for inverse Fourier transform.
   ============================================================================*/
-Atmosphere::drealft(double *data, unsigned long n, int isign){
+void Atmosphere::drealft(double *data, unsigned long n, int isign){
   unsigned long i,i1,i2,i3,i4,np3;
   double c1=0.5,c2,h1r,h1i,h2r,h2i;
   double wr,wi,wpr,wpi,wtemp,theta;
@@ -102,7 +128,7 @@ Atmosphere::drealft(double *data, unsigned long n, int isign){
   theta=3.141592653589793/(double) (n>>1);
   if (isign == 1) {
     c2 = -0.5;
-    four1(data,n>>1,1);
+    dfour1(data,n>>1,1);
   } else {
     c2=0.5;
     theta = -theta;
@@ -132,7 +158,7 @@ Atmosphere::drealft(double *data, unsigned long n, int isign){
   } else {
     data[1]=c1*((h1r=data[1])+data[2]);
     data[2]=c1*(h1r-data[2]);
-    four1(data,n>>1,-1);
+    dfour1(data,n>>1,-1);
   }
 }
 
@@ -149,7 +175,7 @@ Atmosphere::drealft(double *data, unsigned long n, int isign){
   transformation, -1 for reverse transformation.
   ============================================================================*/
 #define SWAP(a,b) tempr=(a);(a)=(b);(b)=tempr
-Atmosphere::dfour1(double *data, unsigned long nn, int isign){
+void Atmosphere::dfour1(double *data, unsigned long nn, int isign){
   unsigned long n,mmax,m,j,istep,i;
   double wtemp,wr,wpr,wpi,wi,theta;
   double tempr,tempi;

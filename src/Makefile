@@ -1,7 +1,9 @@
 INSTALLDIR=~/lib/
+FLAGS=-g -I
 
 ATMOSPHERE_SRC=Atmosphere.C
 ATMOSPHERE_OBJ=$(ATMOSPHERE_SRC:.C=.o)
+
 
 install: libAtmosphere.a
 	cp libAtmosphere.a $(INSTALLDIR)

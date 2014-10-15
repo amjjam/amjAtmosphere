@@ -5,8 +5,12 @@
 #ifndef _ATMOSPHERE_H_
 #define _ATMOSPHERE_H_
 
-#include <random.H>
 #include <math.h>
+
+#include <random.H>
+extern "C"{
+#include <amjMemory.h>
+}
 
 class Atmosphere{
 public:
@@ -17,10 +21,10 @@ private:
   int n; 
   double dt;
   double tau;
-  double *d; [n]
+  double *d; // [n]
   
-  drealft(double *data, unsigned long n, int isign);
-  dfour1(double *data, unsigned long nn, int isign);
+  void drealft(double *data, unsigned long n, int isign);
+  void dfour1(double *data, unsigned long nn, int isign);
 };
 
 
