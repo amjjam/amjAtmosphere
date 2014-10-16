@@ -8,6 +8,7 @@
 #include <math.h>
 
 #include <random.H>
+
 extern "C"{
 #include <amjMemory.h>
 }
