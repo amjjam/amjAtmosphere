@@ -5,9 +5,9 @@
 #include "../include/Atmosphere.H"
 
 /*=============================================================================
-  Atmosphere(RANDOM *random, float dt, float tau, int n) - constructor
+  Atmosphere(Random *random, float dt, float tau, int n) - constructor
 
-  RANDOM *random - random number generator
+  Random *random - random number generator
   float dt - time resolution of the simulated atmosphere, in ms
   float tau - atmospheric coherence time, in ms
   int n - number of time points. Time in the model will then run from 
@@ -21,7 +21,7 @@
 
   Other than that the structure function is 
   ============================================================================*/
-Atmosphere::Atmosphere(RANDOM *random, double dt, double tau, int nn){
+Atmosphere::Atmosphere(Random *random, double dt, double tau, int nn){
   
   // Store resolution and the coherence time
   Atmosphere::dt=dt;

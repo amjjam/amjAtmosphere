@@ -7,7 +7,7 @@
 
 #include <math.h>
 
-#include <random.H>
+#include <Random.H>
 
 extern "C"{
 #include <amjMemory.h>
@@ -15,7 +15,7 @@ extern "C"{
 
 class Atmosphere{
 public:
-  Atmosphere(RANDOM *random, double dt, double tau, int n);
+  Atmosphere(Random *random, double dt, double tau, int n);
   ~Atmosphere();
   double get(double t);
 private:
