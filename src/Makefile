@@ -1,5 +1,6 @@
 INSTALLDIR=~/lib/
-FLAGS=-g -I
+CPPFLAGS=-g -I ~/include/ -L ~/lib/
+CPP=g++
 
 ATMOSPHERE_SRC=Atmosphere.C
 ATMOSPHERE_OBJ=$(ATMOSPHERE_SRC:.C=.o)
@@ -8,7 +9,7 @@ ATMOSPHERE_OBJ=$(ATMOSPHERE_SRC:.C=.o)
 install: libAtmosphere.a
 	cp libAtmosphere.a $(INSTALLDIR)
 
-uninstal:
+uninstall:
 	rm $(INSTALLDIR)/libAtmosphere.a
 
 clean:
