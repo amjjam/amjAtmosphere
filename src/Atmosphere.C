@@ -22,7 +22,55 @@
   Other than that the structure function is 
   ============================================================================*/
 Atmosphere::Atmosphere(Random *random, double dt, double tau, int nn){
+  initialize(random,dt,tau,nn,ATMOSPHERE_MODE_NONE);
+}
+
+
+/*=============================================================================
+  Atmosphere((Random *random, double dt, double tau, int nn, int mode)
+  - constructor with mode selection
   
+  int mode - can be either ATMOSPHERE_MODE_NONE or
+  ATMOSPHERE_MODE_ZERO. Setting mode to ATMOSPHERE_MODE_ZERO set the
+  initial delay of the atmosphere equal to zero.
+  ============================================================================*/
+Atmosphere::Atmosphere(Random *random, double dt, double tau, int nn, 
+		       int mode){  
+  initialize(random,dt,tau,nn,mode);
+}
+
+
+/*=============================================================================
+  ~Atmosphere() - destructor
+  ============================================================================*/
+Atmosphere::~Atmosphere(){
+  free(d);
+}
+
+
+/*=============================================================================
+  double get(double t) - returns the delay at time t.
+  
+  For now it just returns the delay at the nearest grid point. Later I
+  will do a simple linear interpolation.
+  ============================================================================*/
+double Atmosphere::get(double t){
+  int i=round(t/dt);
+
+  return d[i];
+}
+
+
+/******************************************************************************
+ * Private functions. These are modified from Numerical Recipes.              *
+ ******************************************************************************/
+
+/*=============================================================================
+  initialize(Random *random, double dt, double tau, int n, int mode) -
+  common initialization
+  ============================================================================*/
+void Atmosphere::initialize(Random *random, double dt, double tau, int nn, 
+			     int mode){
   // Store resolution and the coherence time
   Atmosphere::dt=dt;
   Atmosphere::tau=tau;
@@ -89,25 +137,16 @@ Atmosphere::Atmosphere(Random *random, double dt, double tau, int nn){
   tmp=pow(tau,5./6.);
   for(int i=0;i<n;i++)
     d[i]/=tmp;
-}
-
-
-/*=============================================================================
-  double get(double t) - returns the delay at time t.
   
-  For now it just returns the delay at the nearest grid point. Later I
-  will do a simple linear interpolation.
-  ============================================================================*/
-double Atmosphere::get(double t){
-  int i=round(t/dt);
-
-  return d[i];
+  // If the mode is set to ATMOSPHERE_MODE_ZERO then subtract the
+  // first delay from all delays. 
+  if(mode==ATMOSPHERE_MODE_ZERO){
+    for(int i=1;i<n;i++)
+      d[i]-=d[0];
+    d[0]=0;
+  }
 }
 
-
-/******************************************************************************
- * Private functions. These are modified from Numerical Recipes.              *
- ******************************************************************************/
 
 /*=============================================================================
   drealft(double *data, unsigned long n, int isign) - this is a double
