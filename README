@@ -1,0 +1,21 @@
+You probably just want to do 
+
+make install
+
+---------------------------
+
+make will build the .so and .a library files. 
+
+make install will install the lib and include files in $(prefix)/lib
+and $(prefix)/include. The default value for prefix is ~. If you want
+to install in a different location then specify the value of prefix on
+the command line like this:
+
+make install prefix=<directory>
+
+uninstall will remove the files from $(prefix)/lib and
+$(prefix)/include
+
+clean will clean up the object and .so and .a files in the src
+directory but will not affect the files installed in prefix.
+
