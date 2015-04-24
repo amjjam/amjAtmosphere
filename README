@@ -2,6 +2,13 @@ You probably just want to do
 
 make install
 
+--------------------------- 
+
+Dependence on libRandom. When building the location of libRandom and
+Random.H is assumed to be at prefix equal to the prefix supplied. If
+you wisth to specify a different prefix for Random then use
+randomprefix= on the command line for make.
+
 ---------------------------
 
 make will build the .so and .a library files. 

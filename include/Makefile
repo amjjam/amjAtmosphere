@@ -1,9 +1,12 @@
-INSTALLDIR=~/include/
+includedir=$(prefix)/include/
+
+build:
 
 install:
-	cp Atmosphere.H $(INSTALLDIR)
+	cp Atmosphere.H $(includedir)
+
+uninstall:
+	- rm -f $(includedir)/Atmosphere.H
 
 clean:
 
-uninstall:
-	rm $(INSTALLDIR)/Atmosphere.H
