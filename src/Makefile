@@ -24,7 +24,9 @@ libAtmosphere.a: $(ATMOSPHERE_OBJ)
 libAtmosphere.so: $(ATMOSPHERE_OBJ)
 	$(CPP) -shared -Wl,-soname,$@ -o $@ $^ -L $(randomlib) -lRandom
 
-install: build
+install: $(libdir)/libAtmosphere.a $(libdir)/libAtmosphere.so
+
+$(libdir)/libAtmosphere.a $(libdir)/libAtmosphere.so: libAtmosphere.a libAtmosphere.so
 	cp libAtmosphere.a libAtmosphere.so $(libdir)
 
 uninstall:
