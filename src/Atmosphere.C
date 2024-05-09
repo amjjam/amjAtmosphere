@@ -44,7 +44,7 @@ Atmosphere::Atmosphere(Random *random, double dt, double tau, int nn,
   ~Atmosphere() - destructor
   ============================================================================*/
 Atmosphere::~Atmosphere(){
-  free(d);
+
 }
 
 
@@ -79,14 +79,14 @@ void Atmosphere::initialize(Random *random, double dt, double tau, int nn,
   // of 2 greater than or equal to n.
   double m=ceil(log(nn)/log(2));
   n=(int)round(exp(m*log(2)));
-  d=amjMalloc1dDouble(n,(char *)"Atmosphere::Atmosphere:d");
+  d.resize(n);
   
   // Fill d with random normally distributed numbers
   for(int i=0;i<n;i++)
     d[i]=random->gaussian();
 
   // Forward Fourier transform d
-  drealft(d-1,n,1);
+  drealft(&d[0]-1,n,1);
 
   // Multiply the Fourier transform by the square root of the
   // Kolmogorov power spectrum. The Kolmogorov power spectrum is
@@ -105,7 +105,7 @@ void Atmosphere::initialize(Random *random, double dt, double tau, int nn,
   d[1]/=pow(f1*n/2,p); // Max frequency, n/2 special case
 
   // Reverse Fourier transform d
-  drealft(d-1,n,-1);
+  drealft(&d[0]-1,n,-1);
 
   // The following is amplitude calibration
 

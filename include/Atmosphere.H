@@ -1,5 +1,7 @@
 /******************************************************************************
  * This implements a simple atmospheric path delay model                      *
+ * The model has duration n*dt, and it repeats if a time beyond the end is    *
+ * requested.
  ******************************************************************************/
 
 #ifndef _ATMOSPHERE_H_
@@ -9,9 +11,7 @@
 
 #include <Random.H>
 
-extern "C"{
-#include <amjMemory.h>
-}
+#include <vector>
 
 #define ATMOSPHERE_MODE_NONE 0
 #define ATMOSPHERE_MODE_ZERO 1
@@ -26,7 +26,7 @@ private:
   int n; 
   double dt;
   double tau;
-  double *d; // [n]
+  std::vector<double> d; // [n]
   
   void initialize(Random *random, double dt, double tau, int nn, int mode);
   void drealft(double *data, unsigned long n, int isign);
