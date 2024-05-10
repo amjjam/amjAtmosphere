@@ -4,8 +4,8 @@
  * requested.
  ******************************************************************************/
 
-#ifndef _ATMOSPHERE_H_
-#define _ATMOSPHERE_H_
+#ifndef _AMJATMOSPHERE_H_
+#define _AMJATMOSPHERE_H_
 
 #include <math.h>
 
@@ -13,14 +13,14 @@
 
 #include <vector>
 
-#define ATMOSPHERE_MODE_NONE 0
-#define ATMOSPHERE_MODE_ZERO 1
+#define AMJATMOSPHERE_MODE_NONE 0
+#define AMJATMOSPHERE_MODE_ZERO 1
 
-class Atmosphere{
+class amjAtmosphere{
 public:
-  Atmosphere(Random *random, double dt, double tau, int n);
-  Atmosphere(Random *random, double dt, double tau, int n, int mode);
-  ~Atmosphere();
+  amjAtmosphere(Random *random, double dt, double tau, int n);
+  amjAtmosphere(Random *random, double dt, double tau, int n, int mode);
+  ~amjAtmosphere();
   double get(double t);
 private:
   int n; 

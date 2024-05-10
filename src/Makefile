@@ -1,36 +1,31 @@
-libdir=$(prefix)/lib
-ifndef randomprefix
-	randomprefix=$(prefix)
-endif
-ifndef randominclude
-	randominclude=$(randomprefix)/include
-endif
-ifndef randomlib
-	randomlib=$(randomprefix)/lib
+ifndef prefix
+	prefix=/opt/amj
 endif
 
-CPPFLAGS=-Wall -g -fPIC -I $(randominclude)
+
+FLAGS=-Wall -g -fPIC -I $(randominclude)
+CPPFLAGS=$(FLAGS)
 CPP=g++
 
-ATMOSPHERE_SRC=Atmosphere.C
-ATMOSPHERE_OBJ=$(ATMOSPHERE_SRC:.C=.o)
+AMJATMOSPHERE_SRC=amjAtmosphere.C
+AMJATMOSPHERE_OBJ=$(AMJATMOSPHERE_SRC:.C=.o)
 
+all: libamjAtmosphere.so
 
-build: libAtmosphere.a libAtmosphere.so
+libamjAtmosphere.so: $(AMJATMOSPHERE_OBJ)
+	$(CPP) -shared -Wl,-soname,$@ -o $@ $^
 
-libAtmosphere.a: $(ATMOSPHERE_OBJ)
-	ar rc $@ $^
-
-libAtmosphere.so: $(ATMOSPHERE_OBJ)
-	$(CPP) -shared -Wl,-soname,$@ -o $@ $^ -L $(randomlib) -lRandom
-
-install: $(libdir)/libAtmosphere.a $(libdir)/libAtmosphere.so
-
-$(libdir)/libAtmosphere.a $(libdir)/libAtmosphere.so: libAtmosphere.a libAtmosphere.so
-	cp libAtmosphere.a libAtmosphere.so $(libdir)
+install: libamjAtmosphere.so ../include/amjAtmosphere.H
+	mkdir -p $(prefix)/lib
+	mkdir -p $(prefix)/include
+	cp libamjAtmosphere.so $(prefix)/lib
+	cp ../include/amjAtmosphere.H $(prefix)/include
 
 uninstall:
-	- rm -f $(libdir)/libAtmosphere.a $(libdir)/libAtmosphere.so
+	- rm $(prefix)/lib/libamjAtmosphere.so
+	- rm $(prefix)/include/amjAtmosphere.H
+	- rmdir $(prefix)/lib
+	- rmdir $(prefix)/include
 
 clean:
-	- rm -f libAtmosphere.a libAtmosphere.so $(ATMOSPHERE_OBJ)
+	- rm libamjAtmosphere.so $(AMJATMOSPHERE.OBJ)

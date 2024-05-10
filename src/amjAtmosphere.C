@@ -2,10 +2,10 @@
  * This implements a simple atmospheric path delay model                      *
  ******************************************************************************/
 
-#include "../include/Atmosphere.H"
+#include "../include/amjAtmosphere.H"
 
 /*=============================================================================
-  Atmosphere(Random *random, float dt, float tau, int n) - constructor
+  amjAtmosphere(Random *random, float dt, float tau, int n) - constructor
 
   Random *random - random number generator
   float dt - time resolution of the simulated atmosphere, in ms
@@ -21,29 +21,29 @@
 
   Other than that the structure function is 
   ============================================================================*/
-Atmosphere::Atmosphere(Random *random, double dt, double tau, int nn){
-  initialize(random,dt,tau,nn,ATMOSPHERE_MODE_NONE);
+amjAtmosphere::amjAtmosphere(Random *random, double dt, double tau, int nn){
+  initialize(random,dt,tau,nn,AMJATMOSPHERE_MODE_NONE);
 }
 
 
 /*=============================================================================
-  Atmosphere((Random *random, double dt, double tau, int nn, int mode)
+  amjAtmosphere((Random *random, double dt, double tau, int nn, int mode)
   - constructor with mode selection
   
-  int mode - can be either ATMOSPHERE_MODE_NONE or
-  ATMOSPHERE_MODE_ZERO. Setting mode to ATMOSPHERE_MODE_ZERO set the
+  int mode - can be either AMJATMOSPHERE_MODE_NONE or
+  AMJATMOSPHERE_MODE_ZERO. Setting mode to AMJATMOSPHERE_MODE_ZERO set the
   initial delay of the atmosphere equal to zero.
   ============================================================================*/
-Atmosphere::Atmosphere(Random *random, double dt, double tau, int nn, 
+amjAtmosphere::amjAtmosphere(Random *random, double dt, double tau, int nn, 
 		       int mode){  
   initialize(random,dt,tau,nn,mode);
 }
 
 
 /*=============================================================================
-  ~Atmosphere() - destructor
+  ~amjAtmosphere() - destructor
   ============================================================================*/
-Atmosphere::~Atmosphere(){
+amjAtmosphere::~amjAtmosphere(){
 
 }
 
@@ -54,7 +54,7 @@ Atmosphere::~Atmosphere(){
   For now it just returns the delay at the nearest grid point. Later I
   will do a simple linear interpolation.
   ============================================================================*/
-double Atmosphere::get(double t){
+double amjAtmosphere::get(double t){
   int i=round(t/dt);
 
   return d[i];
@@ -69,11 +69,11 @@ double Atmosphere::get(double t){
   initialize(Random *random, double dt, double tau, int n, int mode) -
   common initialization
   ============================================================================*/
-void Atmosphere::initialize(Random *random, double dt, double tau, int nn, 
+void amjAtmosphere::initialize(Random *random, double dt, double tau, int nn, 
 			     int mode){
   // Store resolution and the coherence time
-  Atmosphere::dt=dt;
-  Atmosphere::tau=tau;
+  amjAtmosphere::dt=dt;
+  amjAtmosphere::tau=tau;
 
   // Determine the length of d. It should be the smallest power
   // of 2 greater than or equal to n.
@@ -140,7 +140,7 @@ void Atmosphere::initialize(Random *random, double dt, double tau, int nn,
   
   // If the mode is set to ATMOSPHERE_MODE_ZERO then subtract the
   // first delay from all delays. 
-  if(mode==ATMOSPHERE_MODE_ZERO){
+  if(mode==AMJATMOSPHERE_MODE_ZERO){
     for(int i=1;i<n;i++)
       d[i]-=d[0];
     d[0]=0;
@@ -159,7 +159,7 @@ void Atmosphere::initialize(Random *random, double dt, double tau, int nn,
   int isign - the direction of the Fourier transform. 1 for forward
   transformation, -1 for inverse Fourier transform.
   ============================================================================*/
-void Atmosphere::drealft(double *data, unsigned long n, int isign){
+void amjAtmosphere::drealft(double *data, unsigned long n, int isign){
   unsigned long i,i1,i2,i3,i4,np3;
   double c1=0.5,c2,h1r,h1i,h2r,h2i;
   double wr,wi,wpr,wpi,wtemp,theta;
@@ -214,7 +214,7 @@ void Atmosphere::drealft(double *data, unsigned long n, int isign){
   transformation, -1 for reverse transformation.
   ============================================================================*/
 #define SWAP(a,b) tempr=(a);(a)=(b);(b)=tempr
-void Atmosphere::dfour1(double *data, unsigned long nn, int isign){
+void amjAtmosphere::dfour1(double *data, unsigned long nn, int isign){
   unsigned long n,mmax,m,j,istep,i;
   double wtemp,wr,wpr,wpi,wi,theta;
   double tempr,tempi;
