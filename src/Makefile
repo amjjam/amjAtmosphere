@@ -36,4 +36,4 @@ uninstall:
 	- rmdir $(prefix)/include
 
 clean:
-	- rm libamjAtmosphere.so $(AMJATMOSPHERE.OBJ)
+	- rm libamjAtmosphere.so $(AMJATMOSPHERE_OBJ)
