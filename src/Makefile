@@ -1,9 +1,17 @@
 ifndef prefix
 	prefix=/opt/amj
 endif
+ifndef INC
+	INC=-I/opt/amj/include
+endif
+ifndef LIB
+	LIB=-I/opt/amj/include
+endif
 
+LIBS=-lamjCom -lamjTime
+LDFLAGS=$(LIB)
 
-FLAGS=-Wall -g -fPIC -I $(randominclude)
+FLAGS=-Wall -g -fPIC $(INC)
 CPPFLAGS=$(FLAGS)
 CPP=g++
 
