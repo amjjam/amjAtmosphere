@@ -9,7 +9,7 @@
 
 #include <math.h>
 
-#include <Random.H>
+#include <amjRandom.H>
 
 #include <vector>
 
@@ -18,8 +18,8 @@
 
 class amjAtmosphere{
 public:
-  amjAtmosphere(Random *random, double dt, double tau, int n);
-  amjAtmosphere(Random *random, double dt, double tau, int n, int mode);
+  amjAtmosphere(amjRandom *random, double dt, double tau, int n);
+  amjAtmosphere(amjRandom *random, double dt, double tau, int n, int mode);
   ~amjAtmosphere();
   double get(double t);
 private:
@@ -28,7 +28,7 @@ private:
   double tau;
   std::vector<double> d; // [n]
   
-  void initialize(Random *random, double dt, double tau, int nn, int mode);
+  void initialize(amjRandom *random, double dt, double tau, int nn, int mode);
   void drealft(double *data, unsigned long n, int isign);
   void dfour1(double *data, unsigned long nn, int isign);
 };
