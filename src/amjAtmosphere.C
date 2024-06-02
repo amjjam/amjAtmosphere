@@ -5,9 +5,9 @@
 #include "../include/amjAtmosphere.H"
 
 /*=============================================================================
-  amjAtmosphere(Random *random, float dt, float tau, int n) - constructor
+  amjAtmosphere(amjRandom *random, float dt, float tau, int n) - constructor
 
-  Random *random - random number generator
+  amjRandom *random - random number generator
   float dt - time resolution of the simulated atmosphere, in ms
   float tau - atmospheric coherence time, in ms
   int n - number of time points. Time in the model will then run from 
@@ -21,20 +21,20 @@
 
   Other than that the structure function is 
   ============================================================================*/
-amjAtmosphere::amjAtmosphere(Random *random, double dt, double tau, int nn){
+amjAtmosphere::amjAtmosphere(amjRandom *random, double dt, double tau, int nn){
   initialize(random,dt,tau,nn,AMJATMOSPHERE_MODE_NONE);
 }
 
 
 /*=============================================================================
-  amjAtmosphere((Random *random, double dt, double tau, int nn, int mode)
+  amjAtmosphere(amjRandom *random, double dt, double tau, int nn, int mode)
   - constructor with mode selection
   
   int mode - can be either AMJATMOSPHERE_MODE_NONE or
   AMJATMOSPHERE_MODE_ZERO. Setting mode to AMJATMOSPHERE_MODE_ZERO set the
   initial delay of the atmosphere equal to zero.
   ============================================================================*/
-amjAtmosphere::amjAtmosphere(Random *random, double dt, double tau, int nn, 
+amjAtmosphere::amjAtmosphere(amjRandom *random, double dt, double tau, int nn, 
 		       int mode){  
   initialize(random,dt,tau,nn,mode);
 }
@@ -52,12 +52,14 @@ amjAtmosphere::~amjAtmosphere(){
   double get(double t) - returns the delay at time t.
   
   For now it just returns the delay at the nearest grid point. Later I
-  will do a simple linear interpolation.
+  will do a simple linear interpolation. If the time exceeds the end
+  of the array it continues from the beginning with an appropriate
+  offset to make it continuous.
   ============================================================================*/
 double amjAtmosphere::get(double t){
   int i=round(t/dt);
 
-  return d[i];
+  return d[i%d.size()]+(d[d.size()-2]-d[0])*i/d.size();
 }
 
 
@@ -69,7 +71,7 @@ double amjAtmosphere::get(double t){
   initialize(Random *random, double dt, double tau, int n, int mode) -
   common initialization
   ============================================================================*/
-void amjAtmosphere::initialize(Random *random, double dt, double tau, int nn, 
+void amjAtmosphere::initialize(amjRandom *random, double dt, double tau, int nn, 
 			     int mode){
   // Store resolution and the coherence time
   amjAtmosphere::dt=dt;
